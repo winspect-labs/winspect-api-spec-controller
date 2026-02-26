@@ -1,0 +1,7 @@
+apispec:
+  org-id: ${APISPEC_ORG_ID:}
+  api-key: ${APISPEC_API_KEY:}
+  central-api-url: ${APISPEC_CENTRAL_API_URL:http://localhost:8080}
+  cluster-id: ${APISPEC_CLUSTER_ID:default}
+  namespaces: []  # Empty = watch all namespaces
+  sync-interval-ms: 60000  # Sync every 60 seconds

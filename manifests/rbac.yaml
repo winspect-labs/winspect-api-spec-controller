@@ -1,0 +1,32 @@
+# RBAC for Winspect ApiSpec Controller
+# ClusterRole to watch ApiSpec CRDs and read ConfigMaps
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: winspect-apispec-controller
+  namespace: winspect-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: winspect-apispec-controller
+rules:
+  - apiGroups: ["winspect.io"]
+    resources: ["apispecs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: winspect-apispec-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: winspect-apispec-controller
+subjects:
+  - kind: ServiceAccount
+    name: winspect-apispec-controller
+    namespace: winspect-system
