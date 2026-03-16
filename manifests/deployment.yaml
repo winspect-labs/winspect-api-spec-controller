@@ -1,0 +1,51 @@
+# Deployment for Winspect ApiSpec Controller
+# Requires: CRD installed, RBAC applied, and credentials in a Secret
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: winspect-api-spec-controller
+  namespace: winspect-system
+  labels:
+    app: winspect-api-spec-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: winspect-api-spec-controller
+  template:
+    metadata:
+      labels:
+        app: winspect-api-spec-controller
+    spec:
+      serviceAccountName: winspect-apispec-controller
+      containers:
+        - name: controller
+          image: ghcr.io/winspect-labs/winspect-api-spec-controller:latest
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: winspect-apispec-controller-secret
+          env:
+            - name: APISPEC_CLUSTER_ID
+              value: "default"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
